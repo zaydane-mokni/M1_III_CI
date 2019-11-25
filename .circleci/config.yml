@@ -18,28 +18,28 @@
             key: dependencies-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
 
 lint:
-    docker:
-      - image: circleci/node:dubnium
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+  docker:
+    - image: circleci/node:dubnium
+  steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
             # fallback to using the latest cache if no exact match is found
-            - dependencies-
-      - run : yarn lint && yarn format:check
+          - dependencies-
+    - run : yarn lint && yarn format:check
 
 test:
-    docker:
-      - image: circleci/node:dubnium
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+  docker:
+    - image: circleci/node:dubnium
+  steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
             # fallback to using the latest cache if no exact match is found
-            - dependencies-
-      - run : yarn test:ci
+          - dependencies-
+    - run : yarn test:ci
 
 workflows:
   version: 2
