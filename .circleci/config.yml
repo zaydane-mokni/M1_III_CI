@@ -39,19 +39,7 @@
           - dependencies-
     - run : yarn test:ci
 
- workflows:
- build_lint_test:
-   jobs:
-    - build
-    - lint:
-       requires:
-        - build
-    - test:
-       requires:
-        - build
-
-jobs:
-  test:
+  connect:
     docker:
       - image: circleci/node:10
       - image: circleci/postgres:10
@@ -81,3 +69,15 @@ jobs:
           key: v1-deps-{{ checksum "package.json" }}
       - run: yarn lint
       - run: yarn test
+
+
+ workflows:
+ build_lint_test:
+   jobs:
+    - build
+    - lint:
+       requires:
+        - build
+    - test:
+       requires:
+        - build
