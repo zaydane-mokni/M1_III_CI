@@ -39,7 +39,7 @@
           - dependencies-
     - run : yarn test:ci
 
-workflows:
+ workflows:
   version: 2
   build_lint_test:
     jobs:
