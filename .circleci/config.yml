@@ -1,6 +1,6 @@
  version: 2.1
  jobs:
-    install:
+    build:
       docker:
         - image: circleci/node:dubnium-browsers
       working_directory: ~/repo
