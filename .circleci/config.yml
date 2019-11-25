@@ -7,10 +7,10 @@
       steps:
         - checkout
         - restore_cache:
-            keys:
-              - {{ .Environment.CACHE_VERSION }}-dependencies-{{ checksum "package.json" }}
+          keys:
+            - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
             # fallback to using the latest cache if no exact match is found
-              - {{ .Environment.CACHE_VERSION }}-dependencies-
+            - dependencies-
         - run: yarn global add node-gyp && yarn install
         - save_cache:
           paths:
