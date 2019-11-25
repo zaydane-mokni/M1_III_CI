@@ -16,8 +16,7 @@
             paths:
               - node_modules
             key: dependencies-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
-
-lint:
+ lint:
   docker:
     - image: circleci/node:dubnium
   steps:
@@ -28,8 +27,7 @@ lint:
             # fallback to using the latest cache if no exact match is found
           - dependencies-
     - run : yarn lint && yarn format:check
-
-test:
+ test:
   docker:
     - image: circleci/node:dubnium
   steps:
