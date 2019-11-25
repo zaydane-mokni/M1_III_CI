@@ -40,8 +40,8 @@
     - run : yarn test:ci
 
  workflows:
-  version: 2
-  build_lint_test:
+ version: 2
+ build_lint_test:
    jobs:
     - build
     - lint:
