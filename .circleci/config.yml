@@ -1,6 +1,6 @@
  version: 2.1
  jobs:
-   build:
+  build:
       docker:
         - image: circleci/node:dubnium-browsers
       working_directory: ~/repo
@@ -16,7 +16,8 @@
             paths:
               - node_modules
             key: dependencies-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
-   lint:
+
+  lint:
     docker:
       - image: circleci/node:dubnium
     steps:
@@ -27,7 +28,7 @@
               # fallback to using the latest cache if no exact match is found
             - dependencies-
       - run : yarn lint
-   test:
+  test:
       docker:
         - image: circleci/node:dubnium
         - image: circleci/postgres:9.6.2-alpine
@@ -43,7 +44,7 @@
                 # fallback to using the latest cache if no exact match is found
               - dependencies-
         - run : yarn test:ci
-   connect:
+  connect:
       docker:
         - image: circleci/node:10
         - image: circleci/postgres:10
@@ -73,7 +74,7 @@
             key: v1-deps-{{ checksum "package.json" }}
         - run: yarn lint
         - run: yarn connect
-   build_docker_file_and_pushIt:
+  build_docker_file_and_pushIt:
         machine: true
         steps:
            - checkout
@@ -86,7 +87,7 @@
            - run: docker build -t zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM .
            # deploy the image
            - run: docker push zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM
-   doc_build:
+  doc_build:
     docker:
       - image: circleci/node:10
     steps:
