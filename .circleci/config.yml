@@ -27,7 +27,9 @@
             - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
               # fallback to using the latest cache if no exact match is found
             - dependencies-
-      - run: sudo yarn lint && yarn format:check
+      - run: npm test -- --updateSnapshot        
+      - run: npm install -g gulp
+      - run: yarn lint && yarn format:check
 
   test:
    docker:
