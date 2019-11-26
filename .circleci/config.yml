@@ -89,9 +89,6 @@
       - test:
          requires:
           - build
-      - connect:
-         requires:
-          - build
       - build_docker_file_and_pushIt:
             requires:
               - lint
