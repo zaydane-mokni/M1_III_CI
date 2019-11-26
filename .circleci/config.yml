@@ -27,8 +27,8 @@
             - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
               # fallback to using the latest cache if no exact match is found
             - dependencies-
-      - run: yarn lint
-      - run: yarn format:check
+      - run: sudo yarn lint && yarn format:check
+
   test:
    docker:
       - image: circleci/node:dubnium
@@ -51,6 +51,7 @@
             API_PORT: '3000'
             API_HOST: localhost
             API_PROTOCOL: http
+
   build_docker_file_and_pushIt:
         machine: true
         steps:
