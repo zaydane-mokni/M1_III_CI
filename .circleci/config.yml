@@ -109,8 +109,16 @@
     - connect:
        requires:
         - build
+    - build_docker_file_and_pushIt:
+          requires:
+            - lint
+            - test
+            - connect
+          filters:
+            branches:
+              only: master
     - doc_build:
           requires:
             - lint
             - test
-            - e2e
+            - connect
