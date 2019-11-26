@@ -1,6 +1,6 @@
  version: 2.1
  jobs:
-    build:
+   build:
       docker:
         - image: circleci/node:dubnium-browsers
       working_directory: ~/repo
@@ -16,73 +16,73 @@
             paths:
               - node_modules
             key: dependencies-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
- lint:
-  docker:
-    - image: circleci/node:dubnium
-  steps:
-    - checkout
-    - restore_cache:
-        keys:
-          - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
-            # fallback to using the latest cache if no exact match is found
-          - dependencies-
-    - run : yarn lint && yarn format:check
- test:
-  docker:
-    - image: circleci/node:dubnium
-  steps:
-    - checkout
-    - restore_cache:
-        keys:
-          - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
-            # fallback to using the latest cache if no exact match is found
-          - dependencies-
-    - run : yarn test:ci
-
-  connect:
+   lint:
     docker:
-      - image: circleci/node:10
-      - image: circleci/postgres:10
-        environment:
-          POSTGRES_USER: circleci
-          POSTGRES_DB: circleci
-    environment:
-      NODE_ENV: test
-      POSTGRES_USER: circleci
-      POSTGRES_DB: circleci
-      JWT_SECRET: sekrit
+      - image: circleci/node:dubnium
     steps:
-      - run:
-          name: Install ltree extension for Postgres
-          command: |
-            sudo apt-get update
-            sudo apt-get install postgresql-client
-            dockerize -wait tcp://localhost:3000 -timeout 1m
-            psql -U circleci -h localhost -p 3000 -c 'create extension ltree'
       - checkout
       - restore_cache:
-          key: v1-deps-{{ checksum "package.json" }}
-      - run: yarn install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-deps-{{ checksum "package.json" }}
-      - run: yarn lint
-      - run: yarn connect
-
-    build_docker_file_and_pushIt:
-      machine: true
+          keys:
+            - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+              # fallback to using the latest cache if no exact match is found
+            - dependencies-
+      - run : yarn lint && yarn format:check
+   test:
+      docker:
+        - image: circleci/node:dubnium
       steps:
-         - checkout
-         # start proprietary DB using private Docker image
-         # with credentials stored in the UI
-         - run: |
-             echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
-         - run : docker tag  app $DOCKER_LOGIN/my-awesome-ci-expr:latest
-         # build the application image
-         - run: docker build -t zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM .
-         # deploy the image
-         - run: docker push zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM
+        - checkout
+        - restore_cache:
+            keys:
+              - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+                # fallback to using the latest cache if no exact match is found
+              - dependencies-
+        - run : yarn test:ci
+
+   connect:
+      docker:
+        - image: circleci/node:10
+        - image: circleci/postgres:10
+          environment:
+            POSTGRES_USER: circleci
+            POSTGRES_DB: circleci
+      environment:
+        NODE_ENV: test
+        POSTGRES_USER: circleci
+        POSTGRES_DB: circleci
+        JWT_SECRET: sekrit
+      steps:
+        - run:
+            name: Install ltree extension for Postgres
+            command: |
+              sudo apt-get update
+              sudo apt-get install postgresql-client
+              dockerize -wait tcp://localhost:3000 -timeout 1m
+              psql -U circleci -h localhost -p 3000 -c 'create extension ltree'
+        - checkout
+        - restore_cache:
+            key: v1-deps-{{ checksum "package.json" }}
+        - run: yarn install
+        - save_cache:
+            paths:
+              - node_modules
+            key: v1-deps-{{ checksum "package.json" }}
+        - run: yarn lint
+        - run: yarn connect
+
+   build_docker_file_and_pushIt:
+        machine: true
+        steps:
+           - checkout
+           # start proprietary DB using private Docker image
+           # with credentials stored in the UI
+           - run: |
+               echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+           - run: docker tag  app $DOCKER_LOGIN/my-awesome-ci-expr:latest
+           # build the application image
+           - run: docker build -t zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM .
+           # deploy the image
+           - run: docker push zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM
 
 
  workflows:
