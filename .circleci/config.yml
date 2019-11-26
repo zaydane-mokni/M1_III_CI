@@ -27,55 +27,30 @@
             - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
               # fallback to using the latest cache if no exact match is found
             - dependencies-
-      - run: sudo yarn global add tslint typescript        
       - run: yarn lint
       - run: yarn format:check
   test:
-      docker:
-        - image: circleci/node:dubnium
-        - image: circleci/postgres:9.6.2-alpine
+   docker:
+      - image: circleci/node:dubnium
+      - image: circleci/postgres:9.6-alpine
+        environment:
+          POSTGRES_USER: psqluser
+          POSTGRES_DB: psqlpassword
+          POSTGRES_PASSWORD: psdb
+   steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+            - dependencies-
+      - run:
+          command: yarn test:e2e
           environment:
-            POSTGRES_USER: psqluser
-            POSTGRES_PASSWORD: psqlpassword
-            POSTGRES_DB: psdb
-      steps:
-        - checkout
-        - restore_cache:
-            keys:
-              - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
-                # fallback to using the latest cache if no exact match is found
-              - dependencies-
-        - run : yarn test:ci
-  connect:
-      docker:
-        - image: circleci/node:10
-        - image: circleci/postgres:10
-          environment:
-            POSTGRES_USER: circleci
-            POSTGRES_DB: circleci
-      environment:
-        NODE_ENV: test
-        POSTGRES_USER: circleci
-        POSTGRES_DB: circleci
-        JWT_SECRET: sekrit
-      steps:
-        - run:
-            name: Install ltree extension for Postgres
-            command: |
-              sudo apt-get update
-              sudo apt-get install postgresql-client
-              dockerize -wait tcp://localhost:3000 -timeout 1m
-              psql -U circleci -h localhost -p 3000 -c 'create extension ltree'
-        - checkout
-        - restore_cache:
-            key: v1-deps-{{ checksum "package.json" }}
-        - run: yarn install
-        - save_cache:
-            paths:
-              - node_modules
-            key: v1-deps-{{ checksum "package.json" }}
-        - run: yarn lint
-        - run: yarn connect
+            DATABASE_URL: postgres://psqluser:psqlpassword@localhost:5432/psdb
+            JWT_SECRET: 'Test'
+            API_PORT: '3000'
+            API_HOST: localhost
+            API_PROTOCOL: http
   build_docker_file_and_pushIt:
         machine: true
         steps:
@@ -121,7 +96,6 @@
             requires:
               - lint
               - test
-              - connect
             filters:
               branches:
                 only: master
@@ -129,4 +103,3 @@
             requires:
               - lint
               - test
-              - connect
