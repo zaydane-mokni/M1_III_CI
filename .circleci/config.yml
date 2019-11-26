@@ -95,6 +95,7 @@
         - build
     - test:
        requires:
+        - lint
         - build
     - connect:
        requires:
