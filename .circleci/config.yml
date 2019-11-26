@@ -38,7 +38,6 @@
                 # fallback to using the latest cache if no exact match is found
               - dependencies-
         - run : yarn test:ci
-
    connect:
       docker:
         - image: circleci/node:10
@@ -69,7 +68,6 @@
             key: v1-deps-{{ checksum "package.json" }}
         - run: yarn lint
         - run: yarn connect
-
    build_docker_file_and_pushIt:
         machine: true
         steps:
@@ -83,7 +81,20 @@
            - run: docker build -t zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM .
            # deploy the image
            - run: docker push zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM
-
+   doc_build:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+            - dependencies-
+      - run:
+          name: yarn Doc
+          command: yarn doc:build
+      - store_artifacts:
+          path: doc-server
 
  workflows:
  build_and_test:
@@ -98,3 +109,8 @@
     - connect:
        requires:
         - build
+    - doc_build:
+          requires:
+            - lint
+            - test
+            - e2e
