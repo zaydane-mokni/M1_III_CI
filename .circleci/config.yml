@@ -78,13 +78,10 @@
          # with credentials stored in the UI
          - run: |
              echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
-             docker run -d --name db company/proprietary-db:1.2.3
-
          # build the application image
-         - run: docker build -t company/app:$CIRCLE_BRANCH .
-
+         - run: docker build -t zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM .
          # deploy the image
-         - run: docker push company/app:$CIRCLE_BRANCH
+         - run: docker push zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM
 
  workflows:
  build_and_test:
@@ -95,7 +92,6 @@
         - build
     - test:
        requires:
-        - lint
         - build
     - connect:
        requires:
