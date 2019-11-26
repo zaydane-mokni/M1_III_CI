@@ -27,6 +27,7 @@
             - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
               # fallback to using the latest cache if no exact match is found
             - dependencies-
+      - run: sudo yarn global add tslint typescript        
       - run: yarn lint
       - run: yarn format:check
   test:
