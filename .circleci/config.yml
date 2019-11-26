@@ -78,10 +78,12 @@
          # with credentials stored in the UI
          - run: |
              echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+         - run : docker tag  app $DOCKER_LOGIN/my-awesome-ci-expr:latest
          # build the application image
          - run: docker build -t zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM .
          # deploy the image
          - run: docker push zaydane/master_iii_tp_ci/app:$CIRCLE_BUILD_NUM
+
 
  workflows:
  build_and_test:
