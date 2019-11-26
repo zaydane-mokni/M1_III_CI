@@ -26,10 +26,15 @@
             - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
               # fallback to using the latest cache if no exact match is found
             - dependencies-
-      - run : yarn lint 
+      - run : yarn lint
    test:
       docker:
         - image: circleci/node:dubnium
+        - image: circleci/postgres:9.6.2-alpine
+          environment:
+            POSTGRES_USER: psqluser
+            POSTGRES_PASSWORD: psqlpassword
+            POSTGRES_DB: psdb
       steps:
         - checkout
         - restore_cache:
