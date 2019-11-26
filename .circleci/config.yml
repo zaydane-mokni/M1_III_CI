@@ -19,7 +19,7 @@
 
   lint:
     docker:
-      - image: circleci/node:dubnium
+      - image: circleci/node:10-buster
     steps:
       - checkout
       - restore_cache:
