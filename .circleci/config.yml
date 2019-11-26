@@ -97,28 +97,28 @@
           path: doc-server
 
  workflows:
- build_and_test:
-   jobs:
-    - build
-    - lint:
-       requires:
-        - build
-    - test:
-       requires:
-        - build
-    - connect:
-       requires:
-        - build
-    - build_docker_file_and_pushIt:
-          requires:
-            - lint
-            - test
-            - connect
-          filters:
-            branches:
-              only: master
-    - doc_build:
-          requires:
-            - lint
-            - test
-            - connect
+   build_and_test:
+     jobs:
+      - build
+      - lint:
+         requires:
+          - build
+      - test:
+         requires:
+          - build
+      - connect:
+         requires:
+          - build
+      - build_docker_file_and_pushIt:
+            requires:
+              - lint
+              - test
+              - connect
+            filters:
+              branches:
+                only: master
+      - doc_build:
+            requires:
+              - lint
+              - test
+              - connect
