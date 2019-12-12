@@ -79,7 +79,6 @@
           name: yarn Doc
           command: yarn doc:build
       - store_artifacts:
-          path: doc-server
 
  workflows:
    build_and_test:
